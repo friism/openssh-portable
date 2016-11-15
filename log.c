@@ -444,12 +444,8 @@ do_log(LogLevel level, const char *fmt, va_list args)
 	} else {
 		vsnprintf(msgbuf, sizeof(msgbuf), fmt, args);
 	}
-#ifdef WIN32_FIXME//N
-  strncpy(fmtbuf, msgbuf, sizeof(fmtbuf));
-#else
 	strnvis(fmtbuf, msgbuf, sizeof(fmtbuf),
 	    log_on_stderr ? LOG_STDERR_VIS : LOG_SYSLOG_VIS);
-#endif
 
 	if (log_handler != NULL) {
 		/* Avoid recursion */
@@ -461,9 +457,9 @@ do_log(LogLevel level, const char *fmt, va_list args)
 		snprintf(msgbuf, sizeof msgbuf, "%s\r\n", fmtbuf);
 #ifdef WIN32_FIXME//N
 		_write(STDERR_FILENO, msgbuf, strlen(msgbuf));
-#else  
+#else 
 		(void)write(log_stderr_fd, msgbuf, strlen(msgbuf));
-#endif		
+#endif
 	} else {
 #if defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
 		openlog_r(argv0 ? argv0 : __progname, LOG_PID, log_facility, &sdata);

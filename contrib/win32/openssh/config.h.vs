@@ -80,7 +80,7 @@
 /* #undef BROKEN_SNPRINTF */
 
 /* tcgetattr with ICANON may hang */
-/* #undef BROKEN_TCGETATTR_ICANON */
+#define BROKEN_TCGETATTR_ICANON 1
 
 /* updwtmpx is broken (if present) */
 /* #undef BROKEN_UPDWTMPX */

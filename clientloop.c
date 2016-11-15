@@ -114,14 +114,6 @@
 #include "ssherr.h"
 #include "hostfile.h"
 
-#ifdef WIN32_FIXME
-// Windows Console screen size change related
-extern int ScreenX;
-extern int ScrollBottom;
-int win_received_window_change_signal = 1;
-
-#endif
-
 /* import options */
 extern Options options;
 
