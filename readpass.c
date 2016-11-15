@@ -47,17 +47,6 @@
 #include "ssh.h"
 #include "uidswap.h"
 
-#ifdef WIN32_FIXME
-
-  #include <conio.h>
-  #include <sys/socket.h>
-  
-  //extern int PassInputFd;
-  //extern int PassOutputFd;
-  //extern int PassErrorFd;
-
-#endif
-
 static char *
 ssh_askpass(char *askpass, const char *msg)
 {

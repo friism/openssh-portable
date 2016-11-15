@@ -10,6 +10,10 @@ int usleep(unsigned int useconds)
 	return 1;
 }
 
+int nanosleep(const struct timespec *req, struct timespec *rem) {
+	return -1;
+}
+
 /* Difference in us between UNIX Epoch and Win32 Epoch */
 #define EPOCH_DELTA_US  11644473600000000ULL
 
