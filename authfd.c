@@ -96,11 +96,12 @@ ssh_get_authentication_socket(int *fdp)
 
 #ifdef WIN32_FIXME
 	{
-#define SSH_AGENT_ROOT "SOFTWARE\\SSH\\Agent"
+#define SSH_AGENT_REG_ROOT L"SOFTWARE\\SSH\\Agent"
+#define SSH_AGENT_PIPE_NAME L"\\\\.\\pipe\\ssh-agent"
 		HKEY agent_root = 0;
 		DWORD agent_pid = 0, tmp_size = 4, pipe_server_pid = 0xff;
 		HANDLE h;
-		RegOpenKeyEx(HKEY_LOCAL_MACHINE, SSH_AGENT_ROOT, 0, KEY_QUERY_VALUE, &agent_root);
+		RegOpenKeyExW(HKEY_LOCAL_MACHINE, SSH_AGENT_REG_ROOT, 0, KEY_QUERY_VALUE, &agent_root);
 		if (agent_root) {
 			RegQueryValueEx(agent_root, "ProcessId", 0, NULL, &agent_pid, &tmp_size);
 			RegCloseKey(agent_root);

@@ -121,13 +121,11 @@ sshkey_load_file(int fd, struct sshbuf *blob)
 			goto out;
 		}
 	}
-#ifndef WIN32_FIXME//R
 	if ((st.st_mode & (S_IFSOCK|S_IFCHR|S_IFIFO)) == 0 &&
 	    st.st_size != (off_t)sshbuf_len(blob)) {
 		r = SSH_ERR_FILE_CHANGED;
 		goto out;
 	}
-#endif
 	r = 0;
 
  out:
