@@ -94,7 +94,8 @@ ssh_get_authentication_socket(int *fdp)
 	if (fdp != NULL)
 		*fdp = -1;
 
-#ifdef WIN32_FIXME
+#ifdef WINDOWS
+        /* Auth socket in Windows is a static-named pipe listener in ssh-agent*/
 	{
 #define SSH_AGENT_REG_ROOT L"SOFTWARE\\SSH\\Agent"
 #define SSH_AGENT_PIPE_NAME L"\\\\.\\pipe\\ssh-agent"
@@ -120,6 +121,9 @@ ssh_get_authentication_socket(int *fdp)
 			return SSH_ERR_AGENT_NOT_PRESENT;
 		}
 
+                /* ensure that connected server pid matches published pid. this provides service side
+                 * auth and prevents mitm
+                 */
 		if (!GetNamedPipeServerProcessId(h, &pipe_server_pid) || (agent_pid != pipe_server_pid)) {
 			debug("agent pid mismatch");
 			CloseHandle(h);
