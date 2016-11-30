@@ -107,8 +107,8 @@ ssh_get_authentication_socket(int *fdp)
 			RegCloseKey(agent_root);
 		}
 
-		h = CreateFile(
-			"\\\\.\\pipe\\ssh-agent",   // pipe name 
+		h = CreateFileW(
+                        SSH_AGENT_PIPE_NAME,   // pipe name 
 			GENERIC_READ |  // read and write access 
 			GENERIC_WRITE,
 			0,              // no sharing 
