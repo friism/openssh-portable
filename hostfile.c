@@ -533,7 +533,7 @@ hostfile_replace_entries(const char *filename, const char *host, const char *ip,
     struct sshkey **keys, size_t nkeys, int store_hash, int quiet, int hash_alg)
 {
 #ifdef WINDOWS
-	error("replacing host file entries is not supported in Windows");
+	error("replacing host file entries is not supported in Windows yet");
 	return 0;
 #else
 	int r, fd, oerrno = 0;

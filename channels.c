@@ -1762,7 +1762,7 @@ channel_handle_wfd(Channel *c, fd_set *readset, fd_set *writeset)
 		if (compat20 && c->wfd_isatty)
 			dlen = MIN(dlen, 8*1024);
 #endif
-#ifdef WIN32_FIXME /* TODO - Fix this - on windows we somehow end up with dlen = 0*/
+#ifdef WIN32_FIXME /* TODO - Fix this - on windows sometimes dlen ends up as 0. Putting this assert to catch it*/
 		if (dlen <= 0)
 			DebugBreak();
 #endif

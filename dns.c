@@ -205,7 +205,7 @@ verify_host_key_dns(const char *hostname, struct sockaddr *address,
     struct sshkey *hostkey, int *flags)
 {
 #ifdef WINDOWS
-	error("dns host key verification is not supported in Windows");
+	error("dns host key verification is not supported in Windows yet");
 	return -1;
 #else
 	u_int counter;
