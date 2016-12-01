@@ -258,9 +258,6 @@
     <ClCompile Include="$(OpenSSH-Src-Path)ssh_api.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="$(OpenSSH-Src-Path)ttymodes.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="$(OpenSSH-Src-Path)uidswap.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -276,9 +273,6 @@
     <ClCompile Include="$(OpenSSH-Src-Path)xmalloc.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="$(OpenSSH-Src-Path)openssl-dh.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\utf8.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -292,6 +286,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\platform-tracing.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32compat\ttymodes_windows.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
