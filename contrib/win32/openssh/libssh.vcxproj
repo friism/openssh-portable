@@ -275,7 +275,6 @@
     <ClCompile Include="$(OpenSSH-Src-Path)ssherr.c" />
     <ClCompile Include="$(OpenSSH-Src-Path)sshkey.c" />
     <ClCompile Include="$(OpenSSH-Src-Path)ssh_api.c" />
-    <ClCompile Include="$(OpenSSH-Src-Path)uidswap.c" />
     <ClCompile Include="$(OpenSSH-Src-Path)umac.c" />
     <ClCompile Include="$(OpenSSH-Src-Path)uuencode.c" />
     <ClCompile Include="$(OpenSSH-Src-Path)verify.c" />
