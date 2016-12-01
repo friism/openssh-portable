@@ -455,7 +455,7 @@ do_log(LogLevel level, const char *fmt, va_list args)
 		log_handler = tmp_handler;
 	} else if (log_on_stderr) {
 		snprintf(msgbuf, sizeof msgbuf, "%s\r\n", fmtbuf);
-#ifdef WINDIWS
+#ifdef WINDOWS
                 /* In Windows, write is implemented  as part of POSIX compat layer 
                  * that itself may "log" resulting in a infinite recursion loop 
                  */
