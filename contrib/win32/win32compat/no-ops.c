@@ -30,25 +30,48 @@
 
 #include "inc\sys\param.h"
 
-void temporarily_use_uid(struct passwd *pw)
-{
+/* uuidswap.c defs */
+void temporarily_use_uid(struct passwd *pw){
         return;
 }
 
 void
-permanently_drop_suid(uid_t uid)
-{
+permanently_drop_suid(uid_t uid) {
         return;
 }
 
 void
-restore_uid(void)
-{
+restore_uid(void) {
         return;
 }
 
 void
-permanently_set_uid(struct passwd *pw)
-{
+permanently_set_uid(struct passwd *pw) {
         return;
 }
+
+
+/* mux.c defs */
+int muxserver_sock = -1;
+typedef struct Channel Channel;
+unsigned int muxclient_command = 0;
+void
+muxserver_listen(void){
+        DebugBreak();
+}
+
+void
+mux_exit_message(Channel *c, int exitval) {
+        DebugBreak();
+}
+
+void
+mux_tty_alloc_failed(Channel *c) {
+        DebugBreak();
+}
+
+void
+muxclient(const char *path) {
+        DebugBreak();
+}
+

@@ -2,9 +2,5 @@
 
 #define SSH_VERSION	"OpenSSH_7.3"
 
-#ifndef WIN32_FIXME
 #define SSH_PORTABLE	"p1"
-#else
-#define SSH_PORTABLE	"p1 Microsoft_Win32_port"
-#endif
 #define SSH_RELEASE	SSH_VERSION SSH_PORTABLE
