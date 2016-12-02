@@ -75,3 +75,39 @@ muxclient(const char *path) {
         return;
 }
 
+
+int 
+innetgr(const char *netgroup, const char *host,
+        const char *user, const char *domain) {
+        return -1;
+}
+
+
+/* groupaccess.c*/
+int
+ga_init(const char *user, gid_t base) {
+        return -1;
+}
+
+int
+ga_match(char * const *groups, int n) {
+        return -1;
+}
+
+int
+ga_match_pattern_list(const char *group_pattern) {
+        return -1;
+}
+
+void
+ga_free(void) {
+        return;
+}
+
+int chroot(const char *path) {
+        return -1;
+}
+
+int initgroups(const char *user, gid_t group) {
+        return -1;
+}
