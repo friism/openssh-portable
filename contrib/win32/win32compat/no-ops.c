@@ -57,21 +57,21 @@ typedef struct Channel Channel;
 unsigned int muxclient_command = 0;
 void
 muxserver_listen(void){
-        DebugBreak();
+        return;
 }
 
 void
 mux_exit_message(Channel *c, int exitval) {
-        DebugBreak();
+        return;
 }
 
 void
 mux_tty_alloc_failed(Channel *c) {
-        DebugBreak();
+        return;
 }
 
 void
 muxclient(const char *path) {
-        DebugBreak();
+        return;
 }
 
