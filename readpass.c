@@ -147,7 +147,8 @@ char *
 read_passphrase(const char *prompt, int flags)
 {
 	
-#ifdef WIN32_FIXME
+#ifdef WINDOWS
+        /* TODO - review this logic */
 	char *askpass = NULL;
 	char *ret = NULL;
 	char buf[1024] = { 0 };
