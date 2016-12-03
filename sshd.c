@@ -169,7 +169,12 @@ int saved_argc;
 
 /* re-exec */
 int rexeced_flag = 0;
+#ifdef WINDOWS
+/* rexec is not supported in Windows */
+int rexec_flag = 0;
+#else
 int rexec_flag = 1;
+#endif
 int rexec_argc = 0;
 char **rexec_argv;
 
@@ -236,7 +241,12 @@ int *startup_pipes = NULL;
 int startup_pipe;		/* in child */
 
 /* variables used for privilege separation */
+#ifdef WINDOWS
+/* Windows does not use Unix privilege separation model */
+int use_prevsep = 0;
+#else
 int use_privsep = -1;
+#endif
 struct monitor *pmonitor = NULL;
 int privsep_is_preauth = 1;
 
@@ -488,17 +498,10 @@ sshd_exchange_identification(struct ssh *ssh, int sock_in, int sock_out)
 		minor = PROTOCOL_MINOR_1;
 	}
 
-	#ifndef WIN32_FIXME
 	xasprintf(&server_version_string, "SSH-%d.%d-%.100s%s%s%s",
 	    major, minor, SSH_VERSION,
 	    *options.version_addendum == '\0' ? "" : " ",
 	    options.version_addendum, newline);
-	#else
-	xasprintf(&server_version_string, "SSH-%d.%d-%.100s%s%s%s",
-	    major, minor, SSH_RELEASE,
-	    *options.version_addendum == '\0' ? "" : " ",
-	    options.version_addendum, newline);
-	#endif
 
 	/* Send our protocol version identification. */
 	if (atomicio(vwrite, sock_out, server_version_string,
@@ -551,10 +554,6 @@ sshd_exchange_identification(struct ssh *ssh, int sock_in, int sock_out)
 	}
 	debug("Client protocol version %d.%d; client software version %.100s",
 	    remote_major, remote_minor, remote_version);
-
-	#ifdef WIN32_FIXME
-	SetEnvironmentVariable("SSH_CLIENT_ID", remote_version);
-	#endif
 
 	if ((ssh->compat & SSH_BUG_PROBE) != 0) {
 		logit("probed from %s port %d with %s.  Don't panic.",
@@ -1293,15 +1292,6 @@ server_listen(void)
 		/* Only communicate in IPv6 over AF_INET6 sockets. */
 		if (ai->ai_family == AF_INET6)
 			sock_set_v6only(listen_sock);
-    #ifdef WIN32_FIXME
-
-    /*
-     * Forbid inheriting of listen socket.
-     */
-		fcntl(listen_sock, F_SETFD, FD_CLOEXEC);
-    
-  
-    #endif
 
 		debug("Bind to port %s on %s.", strport, ntop);
 
@@ -1498,6 +1488,7 @@ server_accept_loop(int *sock_in, int *sock_out, int *newsock, int *config_s)
                                 SetEnvironmentVariable("SSHD_REMSOC", remotesoc);
                                 debug("Remote Handle %s", remotesoc);
 
+                                /*TODO - disable inheritance on listener and starup fds*/
 				si.cb = sizeof(STARTUPINFO);
 				si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
 				si.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -1831,13 +1822,6 @@ main(int ac, char **av)
 			break;
 		}
 	}
-	
-  #ifdef WIN32_FIXME
-
-    rexec_flag = 0;
-    use_privsep = 0;
-
-  #endif /* WIN32_FIXME */
     
   {
     /*
@@ -1895,12 +1879,11 @@ main(int ac, char **av)
 		rexec_flag = 0;
 	if (!test_flag && (rexec_flag && (av[0] == NULL || *av[0] != '/')))
 		fatal("sshd re-exec requires execution with an absolute path");
-#ifndef WIN32_FIXME
+
 	if (rexeced_flag)
 		closefrom(REEXEC_MIN_FREE_FD);
 	else
 		closefrom(REEXEC_DEVCRYPTO_RESERVED_FD);
-#endif
 
 #ifdef WITH_OPENSSL
 	OpenSSL_add_all_algorithms();
@@ -1924,10 +1907,8 @@ main(int ac, char **av)
 	 * Unset KRB5CCNAME, otherwise the user's session may inherit it from
 	 * root's environment
 	 */
-#ifndef WIN32_FIXME
 	if (getenv("KRB5CCNAME") != NULL)
 		(void) unsetenv("KRB5CCNAME");
-#endif
 
 #ifdef _UNICOS
 	/* Cray can define user privs drop all privs now!
@@ -2020,10 +2001,6 @@ main(int ac, char **av)
 	    "without OpenSSL"
 #endif
 	);
-
-#ifdef WIN32_FIXME
-  logit("[Build " __DATE__ " " __TIME__ "]");
-#endif
 
 #ifndef WINDOWS
 	/* Store privilege separation user for later use if required. */
@@ -2197,7 +2174,6 @@ main(int ac, char **av)
 			fatal("Missing privilege separation directory: %s",
 			    _PATH_PRIVSEP_CHROOT_DIR);
 
-#ifndef WIN32_FIXME
 #ifdef HAVE_CYGWIN
 		if (check_ntsec(_PATH_PRIVSEP_CHROOT_DIR) &&
 		    (st.st_uid != getuid () ||
@@ -2207,7 +2183,6 @@ main(int ac, char **av)
 #endif
 			fatal("%s must be owned by root and not group or "
 			    "world-writable.", _PATH_PRIVSEP_CHROOT_DIR);
-#endif
 	}
 
 	if (test_flag > 1) {
@@ -2227,10 +2202,8 @@ main(int ac, char **av)
 	 * to create a file, and we can't control the code in every
 	 * module which might be used).
 	 */
-#ifndef WIN32_FIXME
 	if (setgroups(0, NULL) < 0)
 		debug("setgroups() failed: %.200s", strerror(errno));
-#endif
 
 	if (rexec_flag) {
 		rexec_argv = xcalloc(rexec_argc + 2, sizeof(char *));
@@ -2350,7 +2323,6 @@ main(int ac, char **av)
 	 * setlogin() affects the entire process group.  We don't
 	 * want the child to be able to affect the parent.
 	 */
-#ifndef WIN32_FIXME
 #if !defined(SSHD_ACQUIRES_CTTY)
 	/*
 	 * If setsid is called, on some platforms sshd will later acquire a
@@ -2360,10 +2332,8 @@ main(int ac, char **av)
 	if (!debug_flag && !inetd_flag && setsid() < 0)
 		error("setsid: %.100s", strerror(errno));
 #endif
-#endif
 
 	if (rexec_flag) {
-#ifndef WIN32_FIXME
 		int fd;
 
 		debug("rexec start in %d out %d newsock %d pipe %d sock %d",
@@ -2400,7 +2370,6 @@ main(int ac, char **av)
 		}
 		debug("rexec cleanup in %d out %d newsock %d pipe %d sock %d",
 		    sock_in, sock_out, newsock, startup_pipe, config_s[0]);
-#endif /* !WIN32_FIXME */
 	}
 
 	/* Executed child processes don't need these. */
