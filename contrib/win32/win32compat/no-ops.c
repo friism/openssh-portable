@@ -118,3 +118,8 @@ int
 setgroups(gid_t group, char* name) {
         return 0;
 }
+
+int
+setsid(void) {
+        return 0;
+}

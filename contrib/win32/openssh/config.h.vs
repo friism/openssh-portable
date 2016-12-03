@@ -859,7 +859,7 @@
 /* #undef HAVE_SETRLIMIT */
 
 /* Define to 1 if you have the `setsid' function. */
-/* #undef HAVE_SETSID */
+#define HAVE_SETSID 1
 
 /* Define to 1 if you have the `setutent' function. */
 /* #undef HAVE_SETUTENT */
