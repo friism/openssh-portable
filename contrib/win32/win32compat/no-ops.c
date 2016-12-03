@@ -111,3 +111,10 @@ int chroot(const char *path) {
 int initgroups(const char *user, gid_t group) {
         return -1;
 }
+
+
+/* sshd.c */
+int
+setgroups(gid_t group, char* name) {
+        return 0;
+}
