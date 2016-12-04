@@ -2296,8 +2296,8 @@ main(int ac, char **av)
 			}
 		}
 
-#ifdef WIN32_FIXME
-      
+#ifdef WINDOWS
+      /* Windows - for sshd child, pick up the accepted socket*/
       if (is_child) {      
 		char *stopstring;
 		DWORD_PTR remotesochandle;
@@ -2312,7 +2312,7 @@ main(int ac, char **av)
 
 		startup_pipe = -1;
       }
-	  else
+	  else /* Windows and Unix sshd parent */
 #endif
 
 		/* Accept a connection and return in a forked child */
