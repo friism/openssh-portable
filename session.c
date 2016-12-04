@@ -455,6 +455,7 @@ do_authenticated1(Authctxt *authctxt)
 
 #ifdef WINDOWS
 #include <Shlobj.h>
+#include <Sddl.h>
 
 #define SET_USER_ENV(folder_id, evn_variable) do  {                \
        if (SHGetKnownFolderPath(&folder_id,0,token,&path) == S_OK)              \

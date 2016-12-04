@@ -287,8 +287,7 @@ static void do_ssh2_kex(void);
   {
     int exitCode = -1;
     
-    /* Windows */
-    #ifdef WINDOWS
+#ifdef WINDOWS
 
     char* dir = w32_programdir();
     if (strnlen(dir, pathSize) == pathSize) 
@@ -298,7 +297,7 @@ static void do_ssh2_kex(void);
         exitCode = 0;
     }
     
-    #endif
+#endif
     
     //
     // Linux.
@@ -2268,7 +2267,7 @@ main(int ac, char **av)
 		platform_pre_listen();
 #ifdef WINDOWS
                 /* For Windows child sshd, skip listener */
-        if (is_child == 0)
+                if (is_child == 0)
 #endif
 		server_listen();
 
