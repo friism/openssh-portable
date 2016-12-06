@@ -228,8 +228,6 @@ ls_file(const char *name, const struct stat *st, int remote, int si_units)
 
 	if (!remote) {
         user = user_from_uid(st->st_uid, 0);
-		user = ubuf;
-
 	} else {
 		snprintf(ubuf, sizeof ubuf, "%u", (u_int)st->st_uid);
 		user = ubuf;
