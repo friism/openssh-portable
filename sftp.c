@@ -608,8 +608,12 @@ process_get(struct sftp_conn *conn, const char *src, const char *dst,
 	abs_src = make_absolute(abs_src, pwd);
 
 #ifdef WINDOWS
-	if(strlen(abs_src) >= 2 && abs_src[2] == ':')
-		abs_src = do_realpath(conn, abs_src);
+	if (strlen(abs_src) >= 2 && abs_src[2] == ':')
+	{
+		char *realPath = do_realpath(conn, abs_src);
+		free(abs_src);
+		abs_src = realPath;
+	}
 #endif	
 
 	memset(&g, 0, sizeof(g));
@@ -751,8 +755,12 @@ process_put(struct sftp_conn *conn, const char *src, const char *dst,
 	/* If we aren't fetching to pwd then stash this status for later */
 	if (tmp_dst != NULL) {		
 		#ifdef WINDOWS
-			if (strlen(tmp_dst) >= 2 && tmp_dst[2] == ':')
-				tmp_dst = do_realpath(conn, tmp_dst);
+		if (strlen(tmp_dst) >= 2 && tmp_dst[2] == ':')
+		{
+			char *realPath = do_realpath(conn, tmp_dst);
+			free(tmp_dst);
+			tmp_dst = realPath;
+		}
 		#endif
 
 		dst_is_dir = remote_is_dir(conn, tmp_dst);
