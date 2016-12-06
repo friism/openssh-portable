@@ -28,7 +28,6 @@
 
 #ifdef WINDOWS
 void strmode(mode_t mode, char *p);
-void strmode_from_attrib(unsigned attrib, char *p);
 #endif
 
 #include <sys/param.h>	/* MAX */
@@ -228,29 +227,16 @@ ls_file(const char *name, const struct stat *st, int remote, int si_units)
     strmode(st->st_mode, mode);
 
 	if (!remote) {
-#ifndef WIN32_FIXME
         user = user_from_uid(st->st_uid, 0);
-#else
-		snprintf(ubuf, sizeof ubuf, "%u", (u_int)st->st_uid);
-		user = ubuf;
-
-		snprintf(gbuf, sizeof gbuf, "%u", (u_int)st->st_gid);
-		group = gbuf;
-#endif
 	} else {
 		snprintf(ubuf, sizeof ubuf, "%u", (u_int)st->st_uid);
 		user = ubuf;
-#ifdef WINDOWS
-        snprintf(gbuf, sizeof gbuf, "%u", (u_int) st -> st_gid);  
-        group = gbuf;
-#else
 	    if (!remote) {
 		    group = group_from_gid(st->st_gid, 0);
 	    } else {
 		    snprintf(gbuf, sizeof gbuf, "%u", (u_int)st->st_gid);
 		    group = gbuf;
 	    }
-#endif
 	}
 	if (ltime != NULL) {
 		now = time(NULL);
