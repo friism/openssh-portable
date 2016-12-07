@@ -44,8 +44,8 @@ int w32_send(int fd, const void *buf, size_t len, int flags);
 int w32_shutdown(int fd, int how);
 int w32_socketpair(int domain, int type, int protocol, int sv[2]);
 
-char *realpathWin32(const char *path, char resolved[MAX_PATH]);
-char *realpathWin32i(const char *path, char resolved[MAX_PATH]);
+//char *realpathWin32(const char *path, char resolved[MAX_PATH]);
+//char *realpathWin32i(const char *path, char resolved[MAX_PATH]);
 
 /*non-network (file) i/o*/
 #undef fdopen

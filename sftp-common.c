@@ -231,13 +231,14 @@ ls_file(const char *name, const struct stat *st, int remote, int si_units)
 	} else {
 		snprintf(ubuf, sizeof ubuf, "%u", (u_int)st->st_uid);
 		user = ubuf;
-	    if (!remote) {
-		    group = group_from_gid(st->st_gid, 0);
-	    } else {
-		    snprintf(gbuf, sizeof gbuf, "%u", (u_int)st->st_gid);
-		    group = gbuf;
-	    }
 	}
+	if (!remote) {
+		group = group_from_gid(st->st_gid, 0);
+	} else {
+		snprintf(gbuf, sizeof gbuf, "%u", (u_int)st->st_gid);
+		group = gbuf;
+	}
+	
 	if (ltime != NULL) {
 		now = time(NULL);
 		if (now - (365*24*60*60)/2 < st->st_mtime &&
