@@ -606,6 +606,16 @@ process_get(struct sftp_conn *conn, const char *src, const char *dst,
 
 	abs_src = xstrdup(src);
 	abs_src = make_absolute(abs_src, pwd);
+
+#ifdef WINDOWS
+	if (strlen(abs_src) >= 2 && abs_src[2] == ':')
+	{
+		char *realPath = do_realpath(conn, abs_src);
+		free(abs_src);
+		abs_src = realPath;
+	}
+#endif	
+
 	memset(&g, 0, sizeof(g));
 
 	debug3("Looking up %s", abs_src);
@@ -645,8 +655,19 @@ process_get(struct sftp_conn *conn, const char *src, const char *dst,
 			} else {
 				abs_dst = xstrdup(dst);
 			}
-		} else if (dst) {
+		} else if (dst) {			
+#ifdef WINDOWS
+			{
+				if (is_dir(dst)) {
+					abs_dst = path_append(dst, filename);
+				}
+				else {
+					abs_dst = xstrdup(dst);
+				}				
+			}
+#else
 			abs_dst = path_append(dst, filename);
+#endif
 		} else {
 			abs_dst = xstrdup(filename);
 		}
@@ -732,8 +753,19 @@ process_put(struct sftp_conn *conn, const char *src, const char *dst,
 	}
 
 	/* If we aren't fetching to pwd then stash this status for later */
-	if (tmp_dst != NULL)
+	if (tmp_dst != NULL) {		
+		#ifdef WINDOWS
+		if (strlen(tmp_dst) >= 2 && tmp_dst[2] == ':')
+		{
+			char *realPath = do_realpath(conn, tmp_dst);
+			free(tmp_dst);
+			tmp_dst = realPath;
+		}
+		#endif
+
 		dst_is_dir = remote_is_dir(conn, tmp_dst);
+	}
+		
 
 	/* If multiple matches, dst may be directory or unspecified */
 	if (g.gl_matchc > 1 && tmp_dst && !dst_is_dir) {
@@ -764,8 +796,17 @@ process_put(struct sftp_conn *conn, const char *src, const char *dst,
 				abs_dst = path_append(tmp_dst, filename);
 			else
 				abs_dst = xstrdup(tmp_dst);
-		} else if (tmp_dst) {
-			abs_dst = path_append(tmp_dst, filename);
+		} else if (tmp_dst) {			
+			#ifdef WINDOWS
+			{
+				if (dst_is_dir)
+					abs_dst = path_append(tmp_dst, filename);
+				else
+					abs_dst = xstrdup(tmp_dst);
+			}
+			#else
+				abs_dst = path_append(tmp_dst, filename);
+			#endif
 		} else {
 			abs_dst = make_absolute(xstrdup(filename), pwd);
 		}
@@ -1560,6 +1601,9 @@ parse_dispatch_command(struct sftp_conn *conn, const char *cmd, char **pwd,
 	case I_RM:
 		path1 = make_absolute(path1, *pwd);
 		remote_glob(conn, path1, GLOB_NOCHECK, NULL, &g);
+#ifdef WINDOWS
+		if(g.gl_pathc > 0)
+#endif
 		for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
             if (!quiet)
 #ifdef WINDOWS
@@ -2380,54 +2424,31 @@ connect_to_server(char *path, char **args, int *in, int *out)
 
 #ifdef WINDOWS
 	{
+		size_t cmdlen = 0;
 		int i = 0;
-		char fullCmd[MAX_PATH] = { 0 };
-		char ioArg[1024] = { 0 };
-		PROCESS_INFORMATION pi = { 0 };
-		STARTUPINFOW si = { 0 };
+		char* full_cmd;
 
-		debug3("Generating ssh-client command...");
-                fullCmd[0] = '\0';
-                if (path[0] != '\0' && path[1] != ':') {
-                        strncat(fullCmd, w32_programdir(), MAX_PATH);
-                        strncat(fullCmd, "\\", MAX_PATH);
-                }
-		strncat(fullCmd, path, MAX_PATH);
-		for (i = 1; args[i]; i++) {
-			strncat(fullCmd, " ", MAX_PATH);
-			strncat(fullCmd, args[i], MAX_PATH);
+		cmdlen = strlen(w32_programdir()) + 1 + strlen(path) + 1;
+		for (i = 1; args[i]; i++)
+			cmdlen += strlen(args[i]) + 1;
+
+		full_cmd = xmalloc(cmdlen);
+		full_cmd[0] = '\0';
+		strcat(full_cmd, w32_programdir());
+		strcat(full_cmd, "\\");
+		strcat(full_cmd, path);
+		for (i = 1; args[i]; i++) 	{
+			strcat(full_cmd, " ");
+			strcat(full_cmd, args[i]);
 		}
 
+		/* disable inheritance on local pipe ends*/
 		fcntl(pout[1], F_SETFD, FD_CLOEXEC);
 		fcntl(pin[0], F_SETFD, FD_CLOEXEC);
 
-		/*
-		* Assign sockets to StartupInfo.
-		*/
-
-		si.cb = sizeof(STARTUPINFOW);
-		si.hStdInput = sfd_to_handle(c_in);
-		si.hStdOutput = sfd_to_handle(c_out);
-		si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
-		si.wShowWindow = SW_HIDE;
-		si.dwFlags = STARTF_USESTDHANDLES;
-		si.lpDesktop = NULL;
-
-		/*
-		* Create child ssh process with given stdout/stdin.
-		*/
-		debug("Executing ssh client: \"%.500s\"...\n", fullCmd);
-
-		if (CreateProcessW(NULL, utf8_to_utf16(fullCmd), NULL, NULL, TRUE,
-			NORMAL_PRIORITY_CLASS, NULL,
-			NULL, &si, &pi) == TRUE) {
-			sshpid = pi.dwProcessId;
-			CloseHandle(pi.hThread);
-			sw_add_child(pi.hProcess, pi.dwProcessId);
-		}
-		else
-			errno = GetLastError();
-	}
+		sshpid = spawn_child(full_cmd, c_in, c_out, STDERR_FILENO, 0);
+		free(full_cmd);
+ 	}
 
 	if (sshpid == -1)
 #else
