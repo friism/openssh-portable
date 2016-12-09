@@ -31,5 +31,6 @@
 #define ftruncate(a, b) w32_ftruncate((a), (b))
 
 int daemon(int nochdir, int noclose);
+char *crypt(const char *key, const char *salt);
 
 #endif
