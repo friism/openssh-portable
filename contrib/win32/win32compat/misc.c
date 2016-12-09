@@ -441,3 +441,9 @@ strmode(mode_t mode, char *p)
 	//*p++ = ' ';		/* will be a '+' if ACL's implemented */
 	*p = '\0';
 }
+
+int 
+w32_chmod(const char *pathname, mode_t mode) {
+        /* TODO - implement this */
+        return 0;
+}

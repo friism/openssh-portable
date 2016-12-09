@@ -924,11 +924,9 @@ process_setstat(u_int32_t id)
 	if (a.flags & SSH2_FILEXFER_ATTR_SIZE) {
 		logit("set \"%s\" size %llu",
 		    name, (unsigned long long)a.size);
-#ifndef WIN32_FIXME
 		r = truncate(name, a.size);
 		if (r == -1)
 			status = errno_to_portable(errno);
-#endif
 	}
 	if (a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
 		logit("set \"%s\" mode %04o", name, a.perm);
@@ -1479,13 +1477,10 @@ process_extended_fsync(u_int32_t id)
 	verbose("fsync \"%s\"", handle_to_name(handle));
 	if ((fd = handle_to_fd(handle)) < 0)
 		status = SSH2_FX_NO_SUCH_FILE;
-#ifndef WIN32_FIXME
-// PRAGMA:TODO
 	else if (handle_is_ok(handle, HANDLE_FILE)) {
 		r = fsync(fd);
 		status = (r == -1) ? errno_to_portable(errno) : SSH2_FX_OK;
 	}
-#endif
 	send_status(id, status);
 }
 

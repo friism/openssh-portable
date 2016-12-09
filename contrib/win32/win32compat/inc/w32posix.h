@@ -94,6 +94,7 @@ int w32_ftruncate(int fd, off_t length);
 char* w32_programdir();
 int w32_fsync(int fd);
 int w32_ioctl(int d, int request, ...);
+int w32_chmod(const char *, mode_t);
 
 /* Shutdown constants */
 #define SHUT_WR SD_SEND

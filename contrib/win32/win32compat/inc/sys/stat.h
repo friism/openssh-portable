@@ -40,6 +40,7 @@
 #define chdir w32_chdir
 #define unlink w32_unlink
 #define rename w32_rename
+#define chmod w32_chmod
 
 struct w32_stat {
 	dev_t     st_dev;     /* ID of device containing file */

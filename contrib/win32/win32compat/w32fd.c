@@ -38,6 +38,7 @@
 #include <assert.h>
 #include <direct.h>
 #include <winioctl.h>
+#include "Shlwapi.h"
 
 /* internal table that stores the fd to w32_io mapping*/
 struct w32fd_table {
@@ -578,24 +579,33 @@ int
 w32_fcntl(int fd, int cmd, ... /* arg */) {
 	va_list valist;
 	va_start(valist, cmd);
+        int ret = 0;
 
 	CHECK_FD(fd);
 
 	switch (cmd) {
 	case F_GETFL:
-		return fd_table.w32_ios[fd]->fd_status_flags;
+		ret = fd_table.w32_ios[fd]->fd_status_flags;
+                break;
 	case F_SETFL:
 		fd_table.w32_ios[fd]->fd_status_flags = va_arg(valist, int);
-		return 0;
+		ret = 0;
+                break;
 	case F_GETFD:
-		return fd_table.w32_ios[fd]->fd_flags;		
+		ret = fd_table.w32_ios[fd]->fd_flags;		
+                break;
 	case F_SETFD:
-		return w32_io_process_fd_flags(fd_table.w32_ios[fd], va_arg(valist, int));		
+		ret =  w32_io_process_fd_flags(fd_table.w32_ios[fd], va_arg(valist, int));		
+                break;
 	default:
 		errno = EINVAL;
 		debug("fcntl - ERROR not supported cmd:%d", cmd);
-		return -1;
-	}
+		ret = -1;
+                break;
+        }
+
+        va_end(valist);
+        return ret;
 }
 
 #define SELECT_EVENT_LIMIT 32
