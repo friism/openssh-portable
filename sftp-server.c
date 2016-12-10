@@ -905,7 +905,8 @@ process_setstat(u_int32_t id)
 	int r, status = SSH2_FX_OK;
 
 	// sshbuf_get_cstring() is called twice.. is this correct?
-	if ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0 )
+	if ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0 ||
+		(r = decode_attrib(iqueue, &a)) != 0)
 		fatal("%s: buffer error: %s", __func__, ssh_err(r));
 	#ifdef WIN32_FIXME
 	char resolvedname[MAXPATHLEN];
@@ -915,10 +916,6 @@ process_setstat(u_int32_t id)
 		name = strdup(resolvedname);
 	}
 	#endif
-
-	if ((r = sshbuf_get_cstring(iqueue, &name, NULL)) != 0 ||
-	    (r = decode_attrib(iqueue, &a)) != 0)
-		fatal("%s: buffer error: %s", __func__, ssh_err(r));
 
 	debug("request %u: setstat name \"%s\"", id, name);
 	if (a.flags & SSH2_FILEXFER_ATTR_SIZE) {
@@ -1705,11 +1702,7 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 		}
 	}
 	
-	#ifndef WIN32_FIXME
 	log_init(__progname, log_level, log_facility, log_stderr);
-#endif
-
-	
 
 	/*
 	 * On platforms where we can, avoid making /proc/self/{mem,maps}
