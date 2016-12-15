@@ -13,7 +13,7 @@
 
 // Windows directory structure content
 struct dirent {
-	char *d_name ; // name of the directory entry
+	char d_name[MAX_PATH] ; // name of the directory entry
 	int  d_ino; // UNIX inode
 	//unsigned attrib ; // its attributes
 };

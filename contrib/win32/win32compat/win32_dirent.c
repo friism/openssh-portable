@@ -41,14 +41,18 @@ DIR * opendir(const char *name)
 
     if ((hFile = _wfindfirst(searchstr, &c_file)) == -1L) {
         if (1) // verbose
-            printf( "No files found for %s search.\n", name );
+        {
+            printf("_wfindfirst - ERROR:%d\n", GetLastError());
+            printf("No files found for %s search.\n", name);
+        }
+            
         return (DIR *) NULL;
     }
     else {
         pdir = (DIR *) malloc( sizeof(DIR) );
 		memset(pdir, 0, sizeof(DIR));
-        pdir->hFile = hFile ;
-        pdir->c_file.attrib = c_file.attrib ;
+        pdir->hFile = hFile;
+        pdir->c_file.attrib = c_file.attrib;
         pdir->c_file.size = c_file.size;
         pdir->c_file.time_access = c_file.time_access;
         pdir->c_file.time_create = c_file.time_create;
@@ -91,22 +95,32 @@ struct dirent *readdir(void *avp)
     char *tmp = NULL;
 
     for (;;) {
-        if ( dirp->first || _wfindnext( dirp->hFile, &c_file ) == 0 ) {
+        if ( dirp->first ) {
 			dirp->first = 0;
-		    if ( ( wcscmp (c_file.name, L".") == 0 ) ||
-			     ( wcscmp (c_file.name, L"..") == 0 ) ) {
-			    continue ;
-		    }
-		    pdirentry = (struct dirent *) malloc( sizeof(struct dirent) );
-
-            if ((tmp = utf16_to_utf8(c_file.name)) == NULL)
-                fatal("failed to covert input arguments");
-            pdirentry->d_name= tmp;
-            tmp = NULL;
-
-		    pdirentry->d_ino = 1; // a fictious one like UNIX to say it is nonzero
-		    return pdirentry ;
+			if ((strcmp(dirp->c_file.name, ".") == 0) ||
+				(strcmp(dirp->c_file.name, "..") == 0)) {
+				continue;
+			}
+			pdirentry = (struct dirent *) malloc(sizeof(struct dirent));			
+			strcpy_s(pdirentry->d_name, MAX_PATH, dirp->c_file.name);
+			pdirentry->d_ino = 1;
+			return pdirentry;
         }
+		else if (_wfindnext(dirp->hFile, &c_file) == 0) {
+			if ((wcscmp(c_file.name, L".") == 0) ||
+				(wcscmp(c_file.name, L"..") == 0)) {
+				continue;
+			}
+			pdirentry = (struct dirent *) malloc(sizeof(struct dirent));
+
+			if ((tmp = utf16_to_utf8(c_file.name)) == NULL)
+				fatal("failed to covert input arguments");			
+			strcpy_s(pdirentry->d_name, MAX_PATH, tmp);
+			free(tmp);
+
+			pdirentry->d_ino = 1; // a fictious one like UNIX to say it is nonzero
+			return pdirentry;
+		}
         else {
 	        return (struct dirent *) NULL;
         }
