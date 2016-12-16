@@ -204,7 +204,7 @@ createFile_flags_setup(int flags, int mode, struct createFile_flags* cf_flags) {
 	switch (rwflags) {
 	case O_RDONLY:
 		cf_flags->dwDesiredAccess = GENERIC_READ;
-		/*todo: need to review to make sure all flags are correct
+		/*todo: need to review to make sure all flags are correct*/
 		if(flags & O_NONBLOCK)
 		{
 			cf_flags->dwShareMode = FILE_SHARE_READ;
