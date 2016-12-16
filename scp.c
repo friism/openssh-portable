@@ -827,7 +827,7 @@ tolocal(int argc, char **argv)
 				char * lastletter = dest + len - 1;
 
 				addargs(&alist, "%s%s%s", argv[argc-1],
-					(lastletter == "\\" || lastletter == "/") ? "" : "\\", basename(argv[i]);
+					(lastletter == "\\" || lastletter == "/") ? "" : "\\", basename(argv[i]));
 			}
 			else
 			{
