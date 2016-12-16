@@ -40,8 +40,7 @@ DIR * opendir(const char *name)
     free(wname);
 
     if ((hFile = _wfindfirst(searchstr, &c_file)) == -1L) {
-        if (1) // verbose
-        {
+        if (1)  {
             printf("_wfindfirst - ERROR:%d\n", GetLastError());
             printf("No files found for %s search.\n", name);
         }

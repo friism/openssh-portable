@@ -835,11 +835,11 @@ tolocal(int argc, char **argv)
 					++name;
 				}
 
-				char * dest = argv[argc - 1];
+				char * dest = argv[argc-1];
 				int len = strlen(dest);
 				char * lastletter = dest + len - 1;
 
-				addargs(&alist, "%s%s%s", argv[argc - 1],
+				addargs(&alist, "%s%s%s", argv[argc-1],
 					(lastletter == "\\" || lastletter == "/") ? "" : "\\", name);
 			}
 			else
@@ -847,7 +847,7 @@ tolocal(int argc, char **argv)
 				addargs(&alist, "%s", _PATH_COPY);
 				addargs(&alist, "/Y");
 				addargs(&alist, "%s", argv[i]);
-				addargs(&alist, "%s", argv[argc - 1]);
+				addargs(&alist, "%s", argv[argc-1]);
 			}
 #else
 			addargs(&alist, "%s", _PATH_CP);
@@ -857,7 +857,7 @@ tolocal(int argc, char **argv)
 				addargs(&alist, "-p");
 			addargs(&alist, "--");
 			addargs(&alist, "%s", argv[i]);
-			addargs(&alist, "%s", argv[argc - 1]);
+			addargs(&alist, "%s", argv[argc-1]);
 #endif
 			if (do_local_cmd(&alist))
 				++errs;
