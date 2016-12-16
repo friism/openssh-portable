@@ -166,8 +166,7 @@ Describe "Tests for scp command" -Tags "CI" {
         }#>
                 
         It 'Directory recursive Copy with -r -p -v option: <Title> ' -TestCases:$testData1 {
-            param([string]$Title, $Source, $Destination)               
-
+            param([string]$Title, $Source, $Destination)
             .\scp -r -p -v $Source $Destination
             
             $equal = @(Compare-Object (Get-Item -path $SourceDir ) (Get-Item -path (join-path $DestinationDir $SourceDirName) ) -Property Name, Length).Length -eq 0
