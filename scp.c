@@ -822,23 +822,12 @@ tolocal(int argc, char **argv)
 				addargs(&alist, "/Y /F /I");
 				addargs(&alist, "%s", argv[i]);
 
-				char *lastf = NULL, *lastr = NULL, *name;
-				if ((lastf = strrchr(argv[i], '/')) == NULL && (lastr = strrchr(argv[i], '\\')) == NULL)
-					name = argv[i];
-				else {
-					if (lastf)
-						name = lastf;
-					if (lastr)
-						name = lastr;
-					++name;
-				}
-
 				char * dest = argv[argc-1];
 				int len = strlen(dest);
 				char * lastletter = dest + len - 1;
 
 				addargs(&alist, "%s%s%s", argv[argc-1],
-					(lastletter == "\\" || lastletter == "/") ? "" : "\\", name);
+					(lastletter == "\\" || lastletter == "/") ? "" : "\\", basename(argv[i]);
 			}
 			else
 			{
@@ -940,20 +929,8 @@ syserr:			run_err("%s: %s", name, strerror(errno));
 			run_err("%s: not a regular file", name);
 			goto next;
 		}
-#ifdef WINDOWS
-		/* account for both slashes on Windows */
-		{
-			char *lastf = NULL, *lastr = NULL;
-			if ((lastf = strrchr(name, '/')) == NULL && (lastr = strrchr(name, '\\')) == NULL)
-				last = name;
-			else {
-				if (lastf)
-					last = lastf;
-				if (lastr)
-					last = lastr;
-				++last;
-			}
-		}
+#ifdef WINDOWS		
+		last = basename(name);
 #else
 		if ((last = strrchr(name, '/')) == NULL)
 			last = name;
@@ -1033,20 +1010,8 @@ rsource(char *name, struct stat *statp)
 		run_err("%s: %s", name, strerror(errno));
 		return;
 	}
-#ifdef WINDOWS
-    /* account for both slashes on Windows */
-    {
-        char *lastf = NULL, *lastr = NULL;
-        if ((lastf = strrchr(name, '/')) == NULL && (lastr = strrchr(name, '\\')) == NULL)
-            last = name;
-        else {
-            if (lastf)
-                last = lastf;
-            if (lastr)
-                last = lastr;
-            ++last;
-        }
-    }
+#ifdef WINDOWS        
+		last = basename(name);
 #else
 	last = strrchr(name, '/');
 	if (last == NULL)
