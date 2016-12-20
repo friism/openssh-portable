@@ -852,7 +852,7 @@ tolocal(int argc, char **argv)
 				addargs(&alist, "%s", argv[i]);				
 
 				if ((last = strrchr(argv[i], '\\')) == NULL)
-					last = argv[argc - 1];
+					last = argv[i];
 				else
 					++last;
 				
