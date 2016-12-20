@@ -857,7 +857,7 @@ tolocal(int argc, char **argv)
 					++last;
 				
 				addargs(&alist, "%s%s%s", argv[argc - 1],
-					strcmp(argv[argc - 1], "\\") ? "" : "\\", last);
+					strcmp(argv[argc - 1], "\\") ? "\\" : "", last);
 			} else {
 				addargs(&alist, "%s", _PATH_COPY);
 				addargs(&alist, "/Y");				
