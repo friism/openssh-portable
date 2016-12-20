@@ -432,7 +432,7 @@ do_cmd2(char *host, char *remuser, char *cmd, int fdin, int fdout)
 	return 0;
 }
 
-void charrepace(char *str, int old, int new)
+void charrepace(char *str, const char old, const char new)
 {
 	char *s1, *s2;
 	s1 = str;
